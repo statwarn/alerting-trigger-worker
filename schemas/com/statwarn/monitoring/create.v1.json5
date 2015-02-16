@@ -1,0 +1,14 @@
+{
+  "id": "evt_ + (+new Date())", // @todo create a UUID instead
+  "created": 1423822310576, // current timestamp (UTC)
+  "type": "application/vnd.com.statwarn.monitoring.create.v1+json",
+  "data": {
+    "id": "",
+    "data": {
+      // some data here
+    },
+    "metadata": {
+      // some data here
+    }
+  }
+}
