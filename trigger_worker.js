@@ -6,7 +6,7 @@ var config = require('./config')(logger);
 var operators = require('./src/operators')();
 var domain = require('./src/domain')(config, logger, operators);
 
-var message_handler = require('./src/message_handler')(config);
+var message_handler = require('./src/message_handler')(logger, config, domain.AlertRepository, domain.MeasurementEntity);
 
 // Consts
 assert(_.isString(config.statwarn.schema.monitoring.create));
