@@ -1,24 +1,35 @@
 'use strict';
 
-module.exports = function () {
-  function AlertRepository() {
+var request = require('requestretry');
 
-  }
+module.exports = function (config, logger, AlertEntity) {
+  function AlertRepository() {}
 
   /**
    * Retrieve every alerts that match the measurement
-   * @param  {String} measurement id
+   * @param  {String} measurement_id
    * @param  {Function} f(err: PrettyError, alerts: Array)
    */
   AlertRepository.findByMeasurementId = function (measurement_id, f) {
-    // /v1/alerts/:alertId?measurement_id=&measurement_id=
+    // /v1/alerts?measurement_id=
+    var endpoint = config.statwarn.alerting.api.endpoint + "/v1/alerts";
+
+    request({
+      url: endpoint,
+      qs: {
+        measurement_id: measurement_id
+      },
+      json: true
+    }, function (err, data) {
+      f(err, err ? null : data.body.map(AlertEntity.fromJSON));
+    });
   };
 
   /**
    * Retrieve every alerts that match the measurement
    * @param  {Measurement} measurement
    * @param  {Function} f(err: PrettyError, actions: Array)
-   *                    err: if any occured
+   *                    err: if any occurred
    *                    actions: an array (empty or not) of triggered action
    */
   AlertRepository.getTriggeredActionsForMeasurement = function (measurement, f) {
@@ -37,7 +48,7 @@ module.exports = function () {
       /**
        * Called once we got each alert's actions
        * @param  {PrettyError,Null}   err             [description]
-       * @param  {Array}   actionPerAlerts [[action1, action2,...], [action3, action4,...]]
+       * @param  {Array}   actionsPerAlertsIndex [[action1, action2,...], [action3, action4,...]]
        */
       function done(err, actionsPerAlertsIndex) {
         if (err) {
