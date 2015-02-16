@@ -19,6 +19,12 @@ module.exports = function (logger) {
     },
 
     statwarn: {
+      schema: {
+        monitoring: {
+          create: 'application/vnd.com.statwarn.monitoring.create.v1+json'
+        }
+      },
+
       alerting: {
         api: {
           endpoint: 'http://127.0.0.1:9000/'
@@ -27,6 +33,13 @@ module.exports = function (logger) {
         trigger: {},
         action: {}
       },
+
+      monitoring: {
+        api: {
+          port: 9002,
+          endpoint: 'http://127.0.0.1:9002'
+        }
+      }
     }
   });
 
