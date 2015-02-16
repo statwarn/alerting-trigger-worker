@@ -3,6 +3,8 @@ require(!process.env.TEST ? './bootstrap' : './bootstrap.test');
 
 var logger = require('./helpers/logger');
 var config = require('./config')(logger);
+var operators = require('./src/operators')();
+var domain = require('./src/domain')(config, logger, operators);
 
 var message_handler = require('./src/message_handler')(config);
 
