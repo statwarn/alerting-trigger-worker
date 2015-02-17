@@ -58,7 +58,11 @@ rabbit.configure({
   exchanges: [
     {name: "statwarn", type: "topic"}
   ]
-}).done(function () {
+}).then(function () {
   logger.info('Ready to trigger.');
   // ready to go!
+}).catch(function (err) {
+  logger.error("RabbitMQ configure error:", err);
+  // Crash the app if we can't connect to RabbitMQ
+  process.exit(1);
 });
