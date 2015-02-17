@@ -6,7 +6,8 @@ var config = require('./config')(logger);
 var operators = require('./src/operators')();
 var domain = require('./src/domain')(config, logger, operators);
 
-var message_handler = require('./src/message_handler')(logger, config, domain.AlertRepository, domain.MeasurementEntity);
+var MessageHandler = require('./src/message_handler')(logger, config, domain.AlertRepository, domain.MeasurementEntity);
+var messageHandler = new MessageHandler();
 
 // Consts
 assert(_.isString(config.statwarn.schema.monitoring.create));
@@ -20,7 +21,7 @@ var rabbit = require('wascally');
 rabbit.nackOnError();
 
 rabbit
-  .handle(SCHEMA_MONITORING_CREATE, message_handler.handle)['catch'](function (err, msg) {
+  .handle(SCHEMA_MONITORING_CREATE, messageHandler.handle.bind(messageHandler))['catch'](function (err, msg) {
     logger.error(err);
     // do something with the error & message
     msg.nack();

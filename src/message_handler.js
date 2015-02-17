@@ -1,35 +1,41 @@
 'use strict';
 
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+
 module.exports = function (logger, config, AlertRepository, MeasurementEntity) {
-  // load operators
-  var operators = require('./operators');
+  function MessageHandler() {}
 
+  util.inherits(MessageHandler, EventEmitter);
 
-  return {
-    /**
-     * Handle a message from RabbitMQ
-     * @param  {Object} message message format will be "application/vnd.com.statwarn.monitoring.create.v1+json"
-     */
-    handle: function (message) {
-      var measurement = message.data;
+  MessageHandler.prototype.handle = function (message) {
+    var measurement = message.data;
 
-      // Postulat: the monitoring-api never send inconsistent/broken monitoring message
-      // thus we don't have measurement format here.
+    // Postulat: the monitoring-api never send inconsistent/broken monitoring message
+    // thus we don't have measurement format here.
 
-      AlertRepository.getTriggeredActionsForMeasurement(MeasurementEntity.fromJSON(measurement), function (err, actions) {
-        if (err) {
-          // requeue this message
-          logger.error(err);
-          return message.nack();
-        }
+    AlertRepository.getTriggeredActionsForMeasurement(MeasurementEntity.fromJSON(measurement), function (err, actionsPerAlert) {
+      if (err) {
+        // requeue this message
+        logger.error(err);
+        return message.nack();
+      }
 
-        actions.forEach(function () {
-          // publish des actions séparées sur rabbitmq
-        });
+      _.forEach(actionsPerAlert, function (actionAndAlerts) {
+        var alert = actionAndAlerts.alert;
 
-        message.ack();
-      });
-    }
-  }
+        _.forEach(actionAndAlerts.triggeredActions, function (action) {
+          this.emit('action:new', {
+            action: action,
+            alert: alert,
+            measurement: measurement
+          });
+        }, this)
+      }, this);
 
+      message.ack();
+    }.bind(this));
+  };
+
+  return MessageHandler;
 };
