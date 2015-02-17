@@ -53,6 +53,9 @@ rabbit
 
 rabbit.configure({
   connection: config.amqp,
+  queues: [
+    {name: config.amqp.alerting.trigger.queue, subscribe: true}
+  ],
   exchanges: [
     {name: config.amqp.alerting.trigger.exchange.name, type: config.amqp.alerting.trigger.exchange.type}
   ]
