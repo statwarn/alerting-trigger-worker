@@ -20,6 +20,32 @@ var rabbit = require('wascally');
 // that nacks the message on an error
 rabbit.nackOnError();
 
+/**
+ * Event handler called when an action is triggered (event 'action:new' on message_handler)
+ * @param {Object} data
+ * @param {Object} data.action Action triggered
+ * @param {Object} data.alert Alert related to the triggered action
+ * @param {Object} data.measurement Measurement which caused the trigger
+ */
+function handleActionTriggered(data) {
+  rabbit.publish(config.amqp.alerting.trigger.exchange, {
+    routingKey: config.amqp.alerting.trigger.routing_key.prefix + data.alert.alert_id,
+    body: {
+      measurement: data.measurement,
+      action: data.action,
+      alert: data.alert
+    },
+    type: SCHEMA_ALERTS_TRIGGERED
+  }).then(function () {
+    console.log("published");
+  }).catch(function (err) {
+    console.err("rabbit publish err:", err);
+  });
+}
+
+// Publish triggered actions on RabbitMQ
+messageHandler.on('action:new', handleActionTriggered);
+
 rabbit
   .handle(SCHEMA_MONITORING_CREATE, messageHandler.handle.bind(messageHandler))['catch'](function (err, msg) {
     logger.error(err);
@@ -28,7 +54,10 @@ rabbit
   });
 
 rabbit.configure({
-  connection: config.amqp
+  connection: config.amqp,
+  exchanges: [
+    {name: "statwarn", type: "topic"}
+  ]
 }).done(function () {
   logger.info('Ready to trigger.');
   // ready to go!
