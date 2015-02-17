@@ -54,7 +54,7 @@ rabbit
 rabbit.configure({
   connection: config.amqp,
   exchanges: [
-    {name: "statwarn", type: "topic"}
+    {name: config.amqp.alerting.trigger.exchange.name, type: config.amqp.alerting.trigger.exchange.type}
   ]
 }).then(function () {
   logger.info('Ready to trigger.');

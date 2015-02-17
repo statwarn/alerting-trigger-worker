@@ -14,7 +14,10 @@ module.exports = function (logger) {
       alerting: {
         trigger: {
           queue: 'monitoring.create',
-          exchange: 'statwarn',
+          exchange: {
+            name: 'statwarn',
+            type: 'topic'
+          },
           routing_key: {
             prefix: 'alerts.triggered.'
           }
