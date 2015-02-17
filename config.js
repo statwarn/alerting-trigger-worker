@@ -13,9 +13,13 @@ module.exports = function (logger) {
 
       alerting: {
         trigger: {
-          queue: 'monitoring.new'
+          queue: 'monitoring.new',
+          exchange: 'statwarn',
+          routing_key: {
+            prefix: 'alerts.triggered.'
+          }
         }
-      },
+      }
     },
 
     statwarn: {
