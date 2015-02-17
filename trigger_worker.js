@@ -36,10 +36,8 @@ function handleActionTriggered(data) {
       alert: data.alert
     },
     type: SCHEMA_ALERTS_TRIGGERED
-  }).then(function () {
-    console.log("published");
   }).catch(function (err) {
-    console.err("rabbit publish err:", err);
+    logger.err("RabbitMQ publish error:", err);
   });
 }
 
