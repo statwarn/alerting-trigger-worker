@@ -22,6 +22,9 @@ module.exports = function (logger) {
       schema: {
         monitoring: {
           create: 'application/vnd.com.statwarn.monitoring.create.v1+json'
+        },
+        alerts: {
+          triggered: 'application/vnd.com.statwarn.alerts.triggered.v1+json'
         }
       },
 

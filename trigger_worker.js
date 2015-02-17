@@ -11,6 +11,7 @@ var message_handler = require('./src/message_handler')(logger, config, domain.Al
 // Consts
 assert(_.isString(config.statwarn.schema.monitoring.create));
 var SCHEMA_MONITORING_CREATE = config.statwarn.schema.monitoring.create;
+var SCHEMA_ALERTS_TRIGGERED = config.statwarn.schema.alerts.triggered;
 
 // connect on amqp
 var rabbit = require('wascally');
