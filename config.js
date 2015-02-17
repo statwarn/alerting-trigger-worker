@@ -5,9 +5,9 @@ module.exports = function (logger) {
 
   var config = env.getOrElseAll({
     amqp: {
-      login: 'guest',
-      password: 'guest',
-      host: 'localhost',
+      user: 'guest',
+      pass: 'guest',
+      server: 'localhost',
       port: 5672,
       vhost: '',
 
