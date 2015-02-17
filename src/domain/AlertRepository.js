@@ -28,9 +28,9 @@ module.exports = function (config, logger, AlertEntity) {
   /**
    * Retrieve every alerts that match the measurement
    * @param  {Measurement} measurement
-   * @param  {Function} f(err: PrettyError, actions: Array)
+   * @param  {Function} f(err: PrettyError, actionsPerAlert: [{actions: Array, alert: Object}])
    *                    err: if any occurred
-   *                    actions: an array (empty or not) of triggered action
+   *                    actionsPerAlert: an array (empty or not) of triggered actions with their related alert
    */
   AlertRepository.getTriggeredActionsForMeasurement = function (measurement, f) {
     // /v1/alerts/:alertId?measurement_id=&measurement_id=
@@ -42,20 +42,29 @@ module.exports = function (config, logger, AlertEntity) {
       }
 
       function checkAlert(measurement, alert, f) {
-        alert.match(measurement, f);
+        alert.match(measurement, function (err, actions) {
+          if (err) {
+            f(err);
+          } else {
+            f(null, {
+              alert: alert,
+              triggeredActions: actions
+            });
+          }
+        });
       }
 
       /**
        * Called once we got each alert's actions
-       * @param  {PrettyError,Null}   err             [description]
-       * @param  {Array}   actionsPerAlertsIndex [[action1, action2,...], [action3, action4,...]]
+       * @param  {PrettyError,null} err
+       * @param  {Array} actionsPerAlert [{alert: ..., triggeredActions: []}, ...]
        */
-      function done(err, actionsPerAlertsIndex) {
+      function done(err, actionsPerAlert) {
         if (err) {
           return f(new PrettyError(500, "At least one alert yield an error", err));
         }
 
-        f(null, _.flatten(actionsPerAlertsIndex));
+        f(null, actionsPerAlert);
       }
 
       // loop asynchronously through each alert and execute them
