@@ -9,7 +9,7 @@ module.exports = function (logger) {
       pass: 'guest',
       server: 'localhost',
       port: 5672,
-      vhost: '',
+      vhost: '%2fstatwarn',
 
       alerting: {
         trigger: {
