@@ -13,12 +13,14 @@ module.exports = function (config, logger, AlertEntity) {
   AlertRepository.findByMeasurementId = function (measurement_id, f) {
     // /v1/alerts?measurement_id=
     var endpoint = config.statwarn.alerting.api.endpoint + "/v1/alerts";
+    var queryString = {
+      measurement_id: measurement_id
+    };
 
+    logger.info("AlertRepository: GET " + endpoint + "?" + _(queryString).pairs().invoke("join", "=").valueOf().join("&"));
     request({
       url: endpoint,
-      qs: {
-        measurement_id: measurement_id
-      },
+      qs: queryString,
       json: true
     }, function (err, data) {
       f(err, err ? null : data.body.map(AlertEntity.fromJSON));
