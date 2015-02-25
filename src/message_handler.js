@@ -9,7 +9,7 @@ module.exports = function (logger, config, AlertRepository, MeasurementEntity) {
   util.inherits(MessageHandler, EventEmitter);
 
   MessageHandler.prototype.handle = function (message) {
-    var measurement = message.data;
+    var measurement = message.body.data;
 
     // Postulat: the monitoring-api never send inconsistent/broken monitoring message
     // thus we don't have measurement format here.
