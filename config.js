@@ -10,6 +10,7 @@ module.exports = function (logger) {
       server: 'localhost',
       port: 5672,
       vhost: '%2fstatwarn',
+      replyQueue: 'reply_queue',
 
       alerting: {
         trigger: {
