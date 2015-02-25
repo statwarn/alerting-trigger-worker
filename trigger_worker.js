@@ -43,7 +43,7 @@ function getConfiguredApp(f, options) {
    * @param {Object} data.measurement Measurement which caused the trigger
    */
   function handleActionTriggered(data) {
-    rabbit.publish(config.amqp.alerting.trigger.exchange, {
+    rabbit.publish(config.amqp.alerting.trigger.exchange.name, {
       routingKey: config.amqp.alerting.trigger.routing_key.prefix + data.alert.alert_id,
       body: {
         measurement: data.measurement,
