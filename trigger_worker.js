@@ -18,6 +18,12 @@ var config = require('./config')(logger);
  *  If false, the AMQP queue described by config.amqp.alerting.trigger.queue will have to be subscribed manually.
  */
 function getConfiguredApp(f, options) {
+  var defaultOptions = {
+    autoSubscribeQueue: true
+  };
+
+  options = _.defaults(options || {}, defaultOptions);
+
   var operators = require('./src/operators')();
   var domain = require('./src/domain')(config, logger, operators);
 
