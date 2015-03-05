@@ -23,7 +23,7 @@ module.exports = function (logger, operators, ActionEntity, TriggerEntity) {
         return f(null, true);
       }
 
-      operator.applyToData(measurement.data, trigger.target_value, trigger.operator_configuration, f);
+      operator.applyToData(measurement.data, trigger.target_value, trigger.operator_configuration, f, measurement);
     }.bind(this);
 
     // Iterate over each trigger and check if it matches the measurement
