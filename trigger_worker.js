@@ -68,19 +68,21 @@ function getConfiguredApp(f, options) {
 
   rabbit
     .handle(SCHEMA_MONITORING_CREATE, messageHandler.handle.bind(messageHandler))['catch'](function (err, msg) {
-    logger.error(err);
-    // do something with the error & message
-    msg.nack();
-  });
+      logger.error(err);
+      // do something with the error & message
+      msg.nack();
+    });
 
   rabbit.configure({
     connection: config.amqp,
-    queues: [
-      {name: config.amqp.alerting.trigger.queue, subscribe: options.autoSubscribeQueue}
-    ],
-    exchanges: [
-      {name: config.amqp.alerting.trigger.exchange.name, type: config.amqp.alerting.trigger.exchange.type}
-    ]
+    queues: [{
+      name: config.amqp.alerting.trigger.queue,
+      subscribe: options.autoSubscribeQueue
+    }],
+    exchanges: [{
+      name: config.amqp.alerting.trigger.exchange.name,
+      type: config.amqp.alerting.trigger.exchange.type
+    }]
   }).done(function () {
     f(config, logger, rabbit);
   }, function (err) {
