@@ -25,6 +25,7 @@ function getConfiguredApp(f, options) {
   options = _.defaults(options || {}, defaultOptions);
 
   var operators = require('./src/operators')();
+  _.extend(operators, options.operators || {}); // extend operators
   var domain = require('./src/domain')(config, logger, operators);
 
   var MessageHandler = require('./src/message_handler')(logger, config, domain.AlertRepository, domain.MeasurementEntity);
